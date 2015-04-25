@@ -1,0 +1,68 @@
+Change in the resample package, most recent first.
+
+
+---- 0.4    2015-04-12
+
+Rename confidence interval functions, from limits.* to CI.*, e.g. CI.percentile.
+   limits.percentile -> CI.percentile
+   limits.t          -> CI.t
+   limits.bootstrapT -> CI.bootstrapT
+
+Add CI.bca.
+
+Note website for newest versions in help(resample-package), and email
+list for announcements of new versions.
+
+Better automatically-generated statistic names.
+
+quantile and confidence interval functions consistently return a matrix
+with appropriate dimnames.
+
+Add a tolerance for use in computing P-values from permutation tests.
+
+Printing a permutationTest2 object now gives both sample sizes.
+
+
+
+---- 0.3    2014-11-23
+
+This version is for people using
+"What Teachers Should Know about the Bootstrap: Resampling in the
+Undergraduate Statistics Curriculum", Tim Hesterberg (2014)
+  http://arxiv.org/abs/1411.5279
+This version is not on CRAN, only on
+  http://www.timhesterberg.net/packages
+(I expect to do another release soon, and CRAN frowns on frequent releases.)
+
+Change the default number of resamples to 10000 (9999 for permutation tests).
+
+Change the name of the argument specifying the number of resamples from
+B to R.
+
+Remove anyNA, require R >= 3.1.0.
+
+Confidence intervals now return probability levels as columns and different
+statistics as rows.
+
+New functions jackknife, limits.bca, limits.bootstrapT.
+The current versions only support one sample.
+
+New utility functions IfElse, cat0, cat0n, catn,
+colStdevs, colVars.
+
+Add datasets, use them in examples.
+
+Add an expand argument to limits.percentile.
+
+Add support for graphical bootstrap, where there is no numerical statistic.
+
+Modify hist.resample to add a vertical line at the observed value,
+add a legend, use more breaks and remove the borders of bars.
+Add arguments to control the breaks and legend.
+
+Change the default plotting character in qqnorm.resample.
+
+
+---- 0.2    2014-03-10
+
+Initial public release.

@@ -4,9 +4,9 @@
 # license that can be found in the LICENSE file or at
 # http://opensource.org/licenses/BSD-3-Clause
 
-# Tests for bootstrap
+# Tests for jackknife
 
-# do.test("~/resample/resample/tests/bootstrap.t")
+# do.test("~/resample/resample/tests/jackknife.t")
 
 {
   set.seed(0)
@@ -15,18 +15,18 @@
 
   # Do resampling using vanilla R, for comparison
   Robserved1 <- mean(v1)
-  Rreplicates1 <- numeric(1000)
-  RreplicatesTrim1 <- numeric(1000)
-  set.seed(1)
-  for(i in 1:1000) {
-    ii <- sample(20, replace = TRUE)
+  RobservedTrim1 <- mean(v1, trim = .25)
+  Rreplicates1 <- numeric(20)
+  RreplicatesTrim1 <- numeric(20)
+  for(i in 1:20) {
+    ii <- -i
     Rreplicates1[i] <- mean(v1[ii])
     RreplicatesTrim1[i] <- mean(v1[ii], trim = .25)
   }
 
   if(FALSE){ # for work by hand
-    Robserved1
-    mean(Rreplicates1)
+    Robserved1         # -0.001778674
+    mean(Rreplicates1) # -0.001778674
     qqnorm(Rreplicates1)
     hist(Rreplicates1); abline(v = Robserved1, col = "red")
   }
@@ -47,43 +47,43 @@
 ### statistic is function
 {
   # base case: data by name, statistic is function by name
-  r <- bootstrap(v1, mean, seed = 1, R = 1000)
+  r <- jackknife(v1, mean)
   compareFun(r)
 }
 
 {
   # data expression
-  r <- bootstrap((v1), mean, seed = 1, R = 1000)
+  r <- jackknife((v1), mean)
   compareFun(r)
 }
 
 {
   # args.stat
-  r <- bootstrap(v1, mean, args.stat = list(trim = .25), seed = 1, R = 1000)
+  r <- jackknife(v1, mean, args.stat = list(trim = .25))
   all.equal(RreplicatesTrim1, as.vector(r$replicates))
 }
 
 {
   # inline function
-  r <- bootstrap(v1, function(z) mean(z), seed = 1, R = 1000)
+  r <- jackknife(v1, function(z) mean(z))
   compareFun(r)
 }
 
 {
   # data frame,
-  r <- bootstrap(df1, colMeans, seed = 1, R = 1000)
+  r <- jackknife(df1, colMeans)
   compareFun(r)
 }
 
 {
   # data expression, data frame
-  r <- bootstrap(df1, colMeans, seed = 1, R = 1000)
+  r <- jackknife(df1, colMeans)
   compareFun(r)
 }
 
 {
   # data expression, matrix
-  r <- bootstrap(as.matrix(df1), colMeans, seed = 1, R = 1000)
+  r <- jackknife(as.matrix(df1), colMeans)
   compareFun(r)
 }
 
@@ -91,31 +91,31 @@
 ### statistic is expression
 {
   # data by name
-  r <- bootstrap(v1, mean(v1), seed = 1, R = 1000)
+  r <- jackknife(v1, mean(v1))
   compareFun(r)
 }
 
 {
   # data by name, but user referred to 'data'
-  r <- bootstrap(v1, mean(data), seed = 1, R = 1000)
+  r <- jackknife(v1, mean(data))
   compareFun(r)
 }
 
 {
   # data as expression, refer to 'data'
-  r <- bootstrap((v1), mean(data), seed = 1, R = 1000)
+  r <- jackknife((v1), mean(data))
   compareFun(r)
 }
 
 {
   # data frame
-  r <- bootstrap(df1, mean(v), seed = 1, R = 1000)
+  r <- jackknife(df1, mean(v))
   compareFun(r)
 }
 
 {
   # data frame expression
-  r <- bootstrap((df1), mean(v), seed = 1, R = 1000)
+  r <- jackknife((df1), mean(v))
   compareFun(r)
 }
 
@@ -124,6 +124,20 @@
   .Random.seed <- r$seed
   all.equal(r, eval(r$call))
 }
+
+### Basic computations
+{ # jackknife bias for mean
+  r <- jackknife(v1, mean)
+  all.equal(r$stats$Bias, 0)
+}
+{ # jackknife SE for mean
+  all.equal(r$stats$SE, sd(v1)/sqrt(20))
+}
+{ # jackknife bias for trimmed mean
+  r <- jackknife(v1, mean, args.stat = list(trim = .25))
+  all.equal(r$stats$Bias, 19 * (mean(RreplicatesTrim1) - RobservedTrim1))
+}
+
 
 {
   rm(v1, df1, Robserved1, Rreplicates1, RreplicatesTrim1, i, ii, compareFun, r)

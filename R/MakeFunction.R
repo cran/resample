@@ -52,7 +52,7 @@
   if(is.call(substituteStatistic) && substituteStatistic[[1]] != "function") {
     # 'statistic' is an expression (function call). Basic form:
     # f <- function(data, ii) {
-    #   X <- data[ii,]  # where X the original name of the data, or 'data'
+    #   X <- data[ii, ]  # where X the original name of the data, or 'data'
     #   eval(substituteStatistic, X, parent.frame())
     # }
     if(!is.name(substituteData)) {
@@ -80,7 +80,7 @@
   }
 
   # 'statistic' is a function.
-  # Simplest form: f <- function(data, ii) statistic(data[ii,])
+  # Simplest form: f <- function(data, ii) statistic(data[ii, ])
   if(is.null(args.stat)) {
     ftext <- paste0("function(data, ii) statistic(",
                     subscriptCall, ")")
@@ -130,7 +130,7 @@ if(FALSE) {
   }
   source("~/resample/R/MakeFunction.R")
   x9 <- 1:9
-  xDF <- data.frame(a=1:5, b=2:6)
+  xDF <- data.frame(a = 1:5, b = 2:6)
 
   # base case: data by name, statistic is function by name
   f <- boot(x9, mean)
@@ -139,7 +139,7 @@ if(FALSE) {
   f <- boot(1:9, mean)
 
   # data expression, matrix
-  f <- boot(cbind(A=1:9, B=2:10), colMeans)
+  f <- boot(cbind(A = 1:9, B = 2:10), colMeans)
 
   # args.stat
   f <- boot(x9, mean, args.stat = list(trim = .25))
@@ -163,7 +163,7 @@ if(FALSE) {
   f <- boot(xDF, mean(a))
 
   # data frame expression
-  f <- boot(data.frame(a=1:5, b=2:6), mean(a))
+  f <- boot(data.frame(a = 1:5, b = 2:6), mean(a))
 
 
   # data frame, resampleColumns integer
@@ -173,7 +173,7 @@ if(FALSE) {
   f <- boot(xDF, cor, resampleColumns = "b")
 
   # data expression, matrix, resampleColumns
-  f <- boot(cbind(A=1:9, B=2:10), cor, resampleColumns = 2)
+  f <- boot(cbind(A = 1:9, B = 2:10), cor, resampleColumns = 2)
 
   # data frame, resampleColumns integer, statistic expression
   f <- boot(xDF, cor(a, b), resampleColumns = 2)

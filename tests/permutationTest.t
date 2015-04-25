@@ -6,7 +6,7 @@
 
 # Tests for permutationTest
 
-# do.test("~/resample/tests/permutationTest.t")
+# do.test("~/resample/resample/tests/permutationTest.t")
 
 {
   n <- 40
@@ -29,7 +29,7 @@
     c(Robserved, mean(Rreplicates)) # 0.540611004 0.002724527
     c(RpValueL, RpValueG, RpValue)  # 0.993 0.008 0.016
     qqnorm(Rreplicates)
-    hist(Rreplicates); abline(v = Robserved, col="red")
+    hist(Rreplicates); abline(v = Robserved, col = "red")
   }
   compareFun <- function(r) {
     allTrue(all.equal(Robserved, unname(r$observed)),
@@ -43,88 +43,90 @@
 
 ##### resampleColumns
 { # resampleColumns = character, statistic is expression of variables
-  r <- permutationTest(myDF, cor(x, y), resampleColumns = "x", seed = 1)
+  r <- permutationTest(myDF, cor(x, y), resampleColumns = "x",
+                       seed = 1, R = 999)
   compareFun(r)
 }
 
 { # resampleColumns = integer
-  r <- permutationTest(myDF, cor(x, y), resampleColumns = 1, seed = 1)
+  r <- permutationTest(myDF, cor(x, y), resampleColumns = 1,
+                       seed = 1, R = 999)
   compareFun(r)
 }
 
 { # statistic is expression of data
   r <- permutationTest(myDF, cor(myDF$x, myDF$y), resampleColumns = 1,
-                       seed = 1)
+                       seed = 1, R = 999)
   compareFun(r)
 }
 
 { # statistic is inline function
   r <- permutationTest(myDF, function(X) cor(X$x, X$y), resampleColumns = 1,
-                       seed=1)
+                       seed = 1, R = 999)
   compareFun(r)
 }
 
 ##### data is a vector, correlation with another vector
 ### statistic is function
 { # data by name, statistic is function by name
-  r <- permutationTest(myX, myCor, seed = 1)
+  r <- permutationTest(myX, myCor, seed = 1, R = 999)
   compareFun(r)
 }
 
 { # data expression
-  r <- permutationTest((myX), myCor, seed = 1)
+  r <- permutationTest((myX), myCor, seed = 1, R = 999)
   compareFun(r)
 }
 
 { # args.stat
-  r <- permutationTest(myX, myCor, args.stat = list(y = myY), seed = 1)
+  r <- permutationTest(myX, myCor, args.stat = list(y = myY), seed = 1, R = 999)
   compareFun(r)
 }
 
 { # inline function
-  r <- permutationTest(myX, function(z) cor(z, myY), seed = 1)
+  r <- permutationTest(myX, function(z) cor(z, myY), seed = 1, R = 999)
   compareFun(r)
 }
 
 { # statistic is expression
-  r <- permutationTest(myX, cor(myX, myY), seed = 1)
+  r <- permutationTest(myX, cor(myX, myY), seed = 1, R = 999)
   compareFun(r)
 }
 
 { # statistic is expression, refer to "data" (probably doesn't work)
-  r <- permutationTest(myX, cor(data, myY), seed = 1)
+  r <- permutationTest(myX, cor(data, myY), seed = 1, R = 999)
   compareFun(r)
 }
 
 { # statistic is expression, data is expression
-  r <- permutationTest((myX), cor(data, myY), seed = 1)
+  r <- permutationTest((myX), cor(data, myY), seed = 1, R = 999)
   compareFun(r)
 }
 
 
 ### statistic is expression
 { # data by name
-  r <- permutationTest(myX, myCor(myX), seed = 1)
+  r <- permutationTest(myX, myCor(myX), seed = 1, R = 999)
   compareFun(r)
 }
 
 { # data by name, but user referred to 'data'
-  r <- permutationTest(myX, myCor(data), seed = 1)
+  r <- permutationTest(myX, myCor(data), seed = 1, R = 999)
   compareFun(r)
 }
 
 { # data as expression, refer to 'data'
-  r <- permutationTest((myX), myCor(data), seed = 1)
+  r <- permutationTest((myX), myCor(data), seed = 1, R = 999)
   compareFun(r)
 }
 
 { # data frame, variable name
-  r <- permutationTest(myDF, myCor(x), seed = 1)
+  r <- permutationTest(myDF, myCor(x), seed = 1, R = 999)
   compareFun(r)
 }
 
 { # data frame expression, variable name
-  r <- permutationTest((myDF), myCor(x), seed = 1)
+  r <- permutationTest((myDF), myCor(x), seed = 1, R = 999)
   compareFun(r)
 }
 
@@ -141,6 +143,26 @@
 { # Multivariate statistic
   r <- permutationTest(myDF, cor, args.stat = list(y = 1:n))
   all.equal(2, nrow(r$stats))
+}
+
+{ # tolerance argument, when close
+  r <- permutationTest(myX, alternative = "less",
+                       function(x) runif(1) * .Machine$double.eps ^ 0.5 / 10,
+                       seed = 1, R=20)
+  r2 <- permutationTest(myX, alternative = "greater",
+                        function(x) runif(1) * .Machine$double.eps ^ 0.5 / 10,
+                        R=20)
+  all(c(r$stats$PValue, r2$stats$PValue) == 1)
+}
+
+{ # tolerance argument, when not close
+  r <- permutationTest(myX, alternative = "less",
+                       function(x) runif(1),
+                       seed = 1, R=20)
+  r2 <- permutationTest(myX, alternative = "greater",
+                        function(x) runif(1),
+                        R=20)
+  all(c(r$stats$PValue, r2$stats$PValue) < 1)
 }
 
 {

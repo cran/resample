@@ -16,25 +16,25 @@
   Basic resampling. Supply the data and statistic to resample.
 }
 \usage{
-bootstrap(data, statistic, B = 1000,
+bootstrap(data, statistic, R = 10000,
           args.stat = NULL, seed = NULL, sampler = samp.bootstrap,
           label = NULL, statisticNames = NULL, block.size = 100,
           trace = FALSE)
-bootstrap2(data, statistic, treatment, data2 = NULL, B = 1000,
+bootstrap2(data, statistic, treatment, data2 = NULL, R = 10000,
           ratio = FALSE,
           args.stat = NULL, seed = NULL, sampler = samp.bootstrap,
           label = NULL, statisticNames = NULL, block.size = 100,
           trace = FALSE)
-permutationTest(data, statistic, B = 999,
+permutationTest(data, statistic, R = 9999,
           alternative = "two.sided", resampleColumns = NULL,
           args.stat = NULL, seed = NULL, sampler = samp.permute,
           label = NULL, statisticNames = NULL, block.size = 100,
-          trace = FALSE)
-permutationTest2(data, statistic, treatment, data2 = NULL, B = 999,
+          trace = FALSE, tolerance = .Machine$double.eps ^ 0.5)
+permutationTest2(data, statistic, treatment, data2 = NULL, R = 9999,
           alternative = "two.sided", ratio = FALSE, paired = FALSE,
           args.stat = NULL, seed = NULL, sampler = samp.permute,
           label = NULL, statisticNames = NULL, block.size = 100,
-          trace = FALSE)
+          trace = FALSE, tolerance = .Machine$double.eps ^ 0.5)
 }
 
 \arguments{
@@ -44,7 +44,7 @@ permutationTest2(data, statistic, treatment, data2 = NULL, B = 999,
   \item{statistic}{
     a function, or expression (e.g. \code{mean(myData, trim = .2)}.
 }
-  \item{B}{
+  \item{R}{
     number of replicates (bootstrap samples or permutation resamples).
 }
   \item{treatment}{
@@ -91,13 +91,18 @@ permutationTest2(data, statistic, treatment, data2 = NULL, B = 999,
 }
   \item{statisticNames}{
     a character vector the same length as the vector returned by
-    \code{statistic}, giving names.
+    \code{statistic}.
 }
   \item{block.size}{
-    integer. The \code{B} replicates are done this many at a time.
+    integer. The \code{R} replicates are done this many at a time.
 }
   \item{trace}{
     logical, if \code{TRUE} an indication of progress is printed.
+}
+  \item{tolerance}{
+    when computing P-values, differences smaller than \code{tolerance}
+    (absolute or relative)
+    between the observed value and the replicates are considered equal.
 }
 }
 \details{
@@ -127,15 +132,18 @@ permutationTest2(data, statistic, treatment, data2 = NULL, B = 999,
   }
 }
 \value{
-  a list with class that matches the name of the function
-  (e.g. \code{"bootstrap2"}), that inherits from \code{"resample"},
+  a list with class
+  \code{"bootstrap"}, \code{"bootstrap2"},
+  \code{"permutationTest"}, \cr
+  or \code{"permutationTest2"},
+  that inherits from \code{"resample"},
   with components:
   \item{observed}{the value of the statistic for the original data.}
-  \item{replicates}{a matrix with \code{B} rows and \code{p} columns.}
+  \item{replicates}{a matrix with \code{R} rows and \code{p} columns.}
   \item{n}{number of observations in the original data, or vector of
   length 2 in two-sample problems.}
   \item{p}{\code{length(observed)}.}
-  \item{B}{number of replications.}
+  \item{R}{number of replications.}
   \item{seed}{the value of the seed at the start of sampling.}
   \item{call}{the matched call.}
   \item{statistics}{a data frame with \code{p} rows, with columns
@@ -145,31 +153,40 @@ permutationTest2(data, statistic, treatment, data2 = NULL, B = 999,
     while the permutation test objects have \code{"Alternative"}
     and \code{"PValue"}.}
 
+  The two-sample versions have an additional component:
+  \item{resultsBoth}{containing resampling results from each data set.
+  containing two components,
+  the results from resampling each of the two samples. These are
+  \code{bootstrap} objects; in the \code{permutationTest2} case
+  they are the result of sampling without replacement.}
+
   There are functions for printing and plotting these objects,
-  in particular \code{print}, \code{plot}, \code{hist}, \code{qqnorm},
+  in particular \code{print}, \code{hist}, \code{qqnorm},
+  \code{plot} (currently the same as \code{hist}),
   \code{quantile}.
 }
 
 \author{
-  Tim Hesterberg <timhesterberg@gmail.com>
+  Tim Hesterberg \email{timhesterberg@gmail.com},\cr
+  \url{http://www.timhesterberg.net/bootstrap}
 }
 \seealso{
 \code{\link{resample-package}},
 \code{\link{samp.bootstrap}},
-\code{\link{limits.percentile}},
-\code{\link{limits.t}}.
+\code{\link{CI.percentile}},
+\code{\link{CI.t}}.
 }
 \examples{
-mydata <- data.frame(a = runif(40), b = rnorm(40))
-boot1 <- bootstrap(mydata, colMeans)
-boot1
-par(mfrow = c(2,1))
-plot(boot1)
-qqnorm(boot1)
-par(mfrow = c(1,1))
-
-boot2 <- bootstrap(mydata, mean(a))
-boot2
+\dontrun{
+# See full set of examples in resample-package, including different
+# ways to call the functions depending on the structure of the data.
+data(Verizon)
+CLEC <- with(Verizon, Time[Group == "CLEC"])
+bootC <- bootstrap(CLEC, mean)
+bootC
+hist(bootC)
+qqnorm(bootC)
+}
 }
 \keyword{nonparametric}
 \keyword{htest}

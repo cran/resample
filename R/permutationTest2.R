@@ -6,17 +6,18 @@
 
 permutationTest2 <- function(data, statistic,
                              treatment, data2 = NULL,
-                             B = 999,
+                             R = 9999,
                              alternative = "two.sided",
                              ratio = FALSE, paired = FALSE,
                              args.stat = NULL,
                              seed = NULL,
                              sampler = samp.permute,
                              label = NULL, statisticNames = NULL,
-                             block.size = 100, trace = FALSE)
+                             block.size = 100, trace = FALSE,
+                             tolerance = .Machine$double.eps ^ 0.5)
 {
-  # Two-sample permutation tests
-  # Either specify (data, data2) or (data, treatment).
+  # Two-sample permutation test.
+  # Specify either (data, data2) or (data, treatment).
   #
   # Args:
   #   data:      vector, matrix, or data frame.
@@ -26,7 +27,7 @@ permutationTest2 <- function(data, statistic,
   #              This may be a vector; let 'd' be its length.
   #   treatment: a vector of length nObs, with two unique values.
   #   data2:     like data.
-  #   B:         number of replications
+  #   R:         number of replications
   #   alternative: one of "two.sided", "greater", or "less"
   #   ratio:     logical, if FALSE then resample the difference between
   #              data and data2 (or first and second treatment).
@@ -39,6 +40,8 @@ permutationTest2 <- function(data, statistic,
   #   statisticNames: names used for printing, character vector of length 'd'.
   #   block.size: replicates are done 'block.size' at a time.
   #   trace:     logical, if TRUE an indication of progress is printed.
+  #   tolerance: numerical tolerance when computing P-values; smaller
+  #              differences between replicated & observed are considered equal.
 
   Call <- match.call()
 
@@ -67,13 +70,11 @@ permutationTest2 <- function(data, statistic,
                               sampler(..., groupSizes = .(nBoth),
                                       returnGroup = .(k))))
       resultsBoth[[k]] <-
-        resample(data, resampleFun, sampler = samplerK, B = B,
+        resample(data, resampleFun, sampler = samplerK, R = R,
                  observedIndices = treatmentInds[[k]],
                  seed = seed,
                  statisticNames = statisticNames,
-                 block.size = block.size, trace = trace)
-      resultsBoth[[k]]$call <-
-        paste("resample for treatment", treatmentNames[k])
+                 block.size = block.size, trace = trace, call = Call)
     }
   } else {  # data and data2
     if(length(dim(data2)) != length(dimData) ||
@@ -96,33 +97,27 @@ permutationTest2 <- function(data, statistic,
                               sampler(..., groupSizes = .(nBoth),
                                       returnGroup = .(k))))
       resultsBoth[[k]] <-
-        resample(dataBoth, resampleFun, sampler = samplerK, B = B,
+        resample(dataBoth, resampleFun, sampler = samplerK, R = R,
                  observedIndices = IfElse(k == 1, 1:nBoth[1],
                    nBoth[1] + 1:nBoth[2]),
                  seed = seed,
                  statisticNames = statisticNames,
-                 block.size = block.size, trace = trace)
-      resultsBoth[[k]]$call <-
-        paste("resample for data set", k)
+                 block.size = block.size, trace = trace, call = Call)
     }
   }
   for(k in 1:2) {
-    # Compute individual P-values. Use alternative="two.sided" because there
+    # Compute individual P-values. Use alternative = "two.sided" because there
     # are too many possibilities for what people would want for the individual
     # results, depending on k, ratio, and which replicates are negative.
     resultsBoth[[k]]$stats <-
-      .resamplePermutationStats(resultsBoth[[k]], alternative = "two.sided")
+      .PermutationStats(resultsBoth[[k]], alternative = "two.sided",
+                        tolerance = tolerance)
+    resultsBoth[[k]]$call <- paste("resample for data set", k)
     class(resultsBoth[[k]]) <- c("bootstrap", "resample")
   }
   names(resultsBoth) <- treatmentNames
-  if(!identical(names(resultsBoth[[1]]$observed),
-                names(resultsBoth[[2]]$observed))) {
-    warning("Statistics returned from the two samples are not compatible,",
-            "will return results so far, without combining them.")
-    print(all.equal(resultsBoth[[1]]$observed,
-                    resultsBoth[[2]]$observed))
+  if(!.CheckCompatibleObserved(resultsBoth))
     return(resultsBoth)
-  }
 
   # combine results
   op <- get(IfElse(ratio, "/", "-"))
@@ -130,15 +125,20 @@ permutationTest2 <- function(data, statistic,
                  op(resultsBoth[[1]]$observed, resultsBoth[[2]]$observed),
                  replicates =
                  op(resultsBoth[[1]]$replicates, resultsBoth[[2]]$replicates),
-                 n = sum(nBoth),
+                 n = nBoth,
                  p = resultsBoth[[1]]$p,
-                 B = B,
+                 R = R,
                  seed = resultsBoth[[1]]$seed,
-                 call = match.call(),
+                 call = Call,
                  resultsBoth = resultsBoth,
                  ratio = ratio)
-  result$call <- match.call()
-  result$stats <- .resamplePermutationStats(result, alternative = alternative)
+  result$failures <- unique(c(resultsBoth[[1]]$failures,
+                              resultsBoth[[2]]$failures))
+  statisticNames <- .StatisticNames2(statisticNames, treatmentNames, ratio,
+                                     resultsBoth[[1]]$observed, Call)
+  names(result$observed) <- statisticNames
+  colnames(result$replicates) <- statisticNames
+  result$stats <- .PermutationStats(result, alternative = alternative)
   class(result) <- c("permutationTest2", "permutationTest", "resample")
   result
 }
@@ -146,7 +146,7 @@ permutationTest2 <- function(data, statistic,
 
 # print.permutationTest2 <- function(x, ...) {
 #   cat0n("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"))
-#   catn("Replications:", x$B)
+#   catn("Replications:", x$R)
 #   catn("Two groups, sample sizes are", x$n[1], x$n[2])
 #   catn("\nSummary Statistics for the", IfElse(x$ratio, "ratio", "difference"),
 #        "between samples 1 and 2:")
@@ -158,13 +158,13 @@ permutationTest2 <- function(data, statistic,
 
 if(FALSE) {
   x9 <- 1:9
-  xDF <- data.frame(a=x9, b=2*x9)
-  t9 <- letters[c(1,1,1,2,1,2,1,2,1)]
+  xDF <- data.frame(X = x9, Y = 2*x9)
+  t9 <- letters[c(1, 1, 1, 2, 1, 2, 1, 2, 1)]
 
   x1 <- x9[t9 == "a"]
   x2 <- x9[t9 == "b"]
-  xDF1 <- data.frame(a = x1)
-  xDF2 <- data.frame(a = x2)
+  xDF1 <- data.frame(X = x1)
+  xDF2 <- data.frame(X = x2)
 
 
   source("~/resample/R/permutationTest2.R")
@@ -172,47 +172,47 @@ if(FALSE) {
   ##### treatment
   ### statistic by name
   # base case: data by name, statistic is function by name
-  permutationTest2(treatment = t9, x9, mean)
+  permutationTest2(treatment = t9, x9, mean, R=99)
 
   temp <- .Last.value
   sapply(temp$resultsBoth, class)
   temp$resultsBoth
 
   # data expression
-  permutationTest2(treatment = t9, (x9), mean)
+  permutationTest2(treatment = t9, (x9), mean, R=99)
 
   # args.stat
-  permutationTest2(treatment = t9, x9, mean, args.stat = list(trim = .25))
+  permutationTest2(treatment = t9, x9, mean, args.stat = list(trim = .25), R=99)
 
   # inline function
-  permutationTest2(treatment = t9, x9, function(z) mean(z))
+  permutationTest2(treatment = t9, x9, function(z) mean(z), R=99)
 
   # data frame,
-  permutationTest2(treatment = t9, xDF, colMeans)
+  permutationTest2(treatment = t9, xDF, colMeans, R=99)
 
   # data expression, data frame
-  permutationTest2(treatment = t9, xDF, colMeans)
+  permutationTest2(treatment = t9, xDF, colMeans, R=99)
 
   # data expression, matrix
-  permutationTest2(treatment = t9, as.matrix(xDF), colMeans)
+  permutationTest2(treatment = t9, as.matrix(xDF), colMeans, R=99)
 
   # data frame, treatment in data frame
   permutationTest2(treatment = tt9, cbind(xDF, tt9 = t9),
-                   function(x) colMeans(x[1:2]))
+                   function(x) colMeans(x[1:2]), R=99)
 
 
   ### statistic expression
   # data by name
-  permutationTest2(treatment = t9, x9, mean(x9))
+  permutationTest2(treatment = t9, x9, mean(x9), R=99)
 
   # data as expression, refer to 'data'
-  permutationTest2(treatment = t9, (x9), mean(data))
+  permutationTest2(treatment = t9, (x9), mean(data), R=99)
 
   # data frame
-  permutationTest2(treatment = t9, xDF, mean(a))
+  permutationTest2(treatment = t9, xDF, mean(X), R=99)
 
   # data frame expression
-  permutationTest2(treatment = t9, (xDF), mean(a))
+  permutationTest2(treatment = t9, (xDF), mean(X), R=99)
 
   # See if results reproduce
   temp <- .Last.value
@@ -223,39 +223,39 @@ if(FALSE) {
   ##### data and data2
   ### statistic by name
   # base case: data by name, statistic is function by name
-  permutationTest2(x1, data2 = x2, mean)
+  permutationTest2(x1, data2 = x2, mean, R=99)
 
   # data expression
-  permutationTest2((x1), data2 = (x2), mean)
+  permutationTest2((x1), data2 = (x2), mean, R=99)
 
   # args.stat
-  permutationTest2(x1, data2 = x2, mean, args.stat = list(trim = .25))
+  permutationTest2(x1, data2 = x2, mean, args.stat = list(trim = .25), R=99)
 
   # inline function
-  permutationTest2(x1, data2 = x2, function(z) mean(z))
+  permutationTest2(x1, data2 = x2, function(z) mean(z), R=99)
 
   # data frame,
-  permutationTest2(xDF1, data2 = xDF2, colMeans)
+  permutationTest2(xDF1, data2 = xDF2, colMeans, R=99)
 
   # data expression, data frame,
-  permutationTest2((xDF1), data2 = (xDF2), colMeans)
+  permutationTest2((xDF1), data2 = (xDF2), colMeans, R=99)
 
   # data expression, matrix
-  permutationTest2(as.matrix(xDF1), data2 = as.matrix(xDF2), colMeans)
+  permutationTest2(as.matrix(xDF1), data2 = as.matrix(xDF2), colMeans, R=99)
 
 
   ### statistic expression
   # data by name  (refer to 'data')
-  permutationTest2(x1, data2 = x2, mean(data))
+  permutationTest2(x1, data2 = x2, mean(data), R=99)
 
   # data as expression, refer to 'data'
-  permutationTest2((x1), data2 = (x2), mean(data))
+  permutationTest2((x1), data2 = (x2), mean(data), R=99)
 
   # data frame
-  permutationTest2(xDF1, data2 = xDF2, mean(a))
+  permutationTest2(xDF1, data2 = xDF2, mean(X), R=99)
 
   # data frame expression
-  permutationTest2((xDF1), data2 = (xDF2), mean(a))
+  permutationTest2((xDF1), data2 = (xDF2), mean(X), R=99)
 
   # See if results reproduce
   temp <- .Last.value

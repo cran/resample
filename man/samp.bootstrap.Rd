@@ -14,8 +14,8 @@
   Generate indices for resampling.
 }
 \usage{
-samp.bootstrap(n, B, size = n - reduceSize, reduceSize = 0)
-samp.permute(n, B, size = n - reduceSize, reduceSize = 0,
+samp.bootstrap(n, R, size = n - reduceSize, reduceSize = 0)
+samp.permute(n, R, size = n - reduceSize, reduceSize = 0,
              groupSizes = NULL, returnGroup = NULL)
 }
 \arguments{
@@ -23,7 +23,7 @@ samp.permute(n, B, size = n - reduceSize, reduceSize = 0,
     sample size. For two-sample permutation tests, this is the sum of
     the two sample sizes.
 }
-  \item{B}{
+  \item{R}{
     number of vectors of indices to produce.
 }
   \item{size}{
@@ -52,7 +52,7 @@ samp.permute(n, B, size = n - reduceSize, reduceSize = 0,
 }
 }
 \value{
-  matrix with \code{size} rows and \code{B} columns
+  matrix with \code{size} rows and \code{R} columns
   (or \code{groupSizes(returnGroup)} rows).
   Each column contains indices for one bootstrap sample, or one permutation.
 }
@@ -65,7 +65,7 @@ samp.permute(n, B, size = n - reduceSize, reduceSize = 0,
   If \code{groupSizes} is supplied then \code{size} is ignored.
 }
 \note{
-  The value passed as \code{B} to this function is typically the
+  The value passed as \code{R} to this function is typically the
   \code{block.size} argument to \code{\link{bootstrap}} and other
   resampling functions.
 }
@@ -77,7 +77,8 @@ samp.permute(n, B, size = n - reduceSize, reduceSize = 0,
   \url{http://www.timhesterberg.net/articles/JSM04-bootknife.pdf}.
 }
 \author{
-  Tim Hesterberg <timhesterberg@gmail.com>
+  Tim Hesterberg \email{timhesterberg@gmail.com},\cr
+  \url{http://www.timhesterberg.net/bootstrap}
 }
 \seealso{
   \code{\link{resample-package}}.

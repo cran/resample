@@ -16,8 +16,8 @@
     if(!exists(".Random.seed"))
       runif(1)
   } else if(length(seed) > 1) {
-    # An old value of .Random.seed
-    .Random.seed <<- seed
+    # Restore an old value of .Random.seed
+    assign(x = ".Random.seed", value = seed, envir = .GlobalEnv)
   } else {
     set.seed(seed)
   }

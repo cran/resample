@@ -15,9 +15,10 @@
   called directly.
 }
 \usage{
-resample(data, resampleFun, sampler, B = 1000, seed = NULL,
-         statisticNames = NULL,
-         block.size = 100, trace = FALSE, ..., observedIndices = 1:n)
+resample(data, resampleFun, sampler, R = 10000, seed = NULL,
+         statisticNames = NULL, block.size = 100,
+         trace = FALSE, ..., observedIndices = 1:n,
+         call = match.call())
 }
 \arguments{
   \item{data}{
@@ -32,7 +33,7 @@ resample(data, resampleFun, sampler, B = 1000, seed = NULL,
     a function like \code{\link{samp.bootstrap}} or
     \code{\link{samp.permute}}.
 }
-  \item{B}{
+  \item{R}{
     number of resamples.
 }
   \item{seed}{
@@ -40,10 +41,10 @@ resample(data, resampleFun, sampler, B = 1000, seed = NULL,
 }
   \item{statisticNames}{
     a character vector the same length as the vector returned by
-    \code{statistic}, giving names.
+    \code{statistic}.
 }
   \item{block.size}{
-    integer. The \code{B} replicates are done this many at a time.
+    integer. The \code{R} replicates are done this many at a time.
 }
   \item{trace}{
     logical, if \code{TRUE} an indication of progress is printed.
@@ -57,15 +58,20 @@ resample(data, resampleFun, sampler, B = 1000, seed = NULL,
     \code{\link{permutationTest2}}, those should be indices
     corresponding to one sample in a merged data set.
 }
+  \item{call}{
+    typically the call to \code{bootstrap} or another function that
+    calls resample. This may be a character string, e.g. when called
+    from \code{bootstrap2}.
+}
 }
 \value{
   an object of class \code{"resample"}; this is
   a list with components:
   \item{observed}{the observed statistic, length \code{p}.}
-  \item{replicates}{a matrix with \code{B} rows and \code{p} columns.}
+  \item{replicates}{a matrix with \code{R} rows and \code{p} columns.}
   \item{n}{number of observations}
   \item{p}{the length of the statistic returned by \code{resampleFun}.}
-  \item{B}{number of resamples.}
+  \item{R}{number of resamples.}
   \item{seed}{the value of \code{seed} when this function is called.}
 }
 \details{
@@ -83,7 +89,8 @@ resample(data, resampleFun, sampler, B = 1000, seed = NULL,
   \code{resampleFun} must be a function.
 }
 \author{
-  Tim Hesterberg <timhesterberg@gmail.com>
+  Tim Hesterberg \email{timhesterberg@gmail.com},\cr
+  \url{http://www.timhesterberg.net/bootstrap}
 }
 
 \seealso{
@@ -98,13 +105,14 @@ resample(data, resampleFun, sampler, B = 1000, seed = NULL,
   \code{\link{resample-package}}.
 }
 \examples{
-mydata <- data.frame(a = runif(40), b = rnorm(40))
-boot <- bootstrap(mydata, function(x, i) colMeans(x[i, , drop = FALSE]))
-boot
-par(mfrow = c(2,1))
-plot(boot)
-qqnorm(boot)
-par(mfrow = c(1,1))
+\dontrun{
+# See full set of examples in resample-package, including different
+# ways to call all the functions depending on the structure of the data.
+data(Verizon)
+CLEC <- with(Verizon, Time[Group == "CLEC"])
+bootC <- bootstrap(CLEC, mean, seed = 0)
+bootC
+}
 }
 \keyword{nonparametric}
 \keyword{htest}

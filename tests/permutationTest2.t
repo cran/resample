@@ -6,7 +6,7 @@
 
 # Tests for permutationTest2
 
-# do.test("~/resample/tests/permutationTest2.t")
+# do.test("~/resample/resample/tests/permutationTest2.t")
 
 {
   set.seed(0)
@@ -19,7 +19,7 @@
   treat <- rep(1:2, c(20, 25))
   df12t <- cbind(df12, treatdf = treat)
 
-  # Do resampling by hand, for comparison
+  # Do resampling using vanilla R, for comparison
   Robserved <- mean(v1) - mean(v2)
   Robserved1 <- mean(v1)
   Robserved2 <- mean(v2)
@@ -41,7 +41,7 @@
     mean(Rreplicates) # .004
     RpValue           # .025
     qqnorm(Rreplicates)
-    hist(Rreplicates); abline(v = Robserved, col="red")
+    hist(Rreplicates); abline(v = Robserved, col = "red")
   }
   compareFun <- function(r) {
     r2 <- r$resultsBoth
@@ -60,49 +60,58 @@
 ### statistic is function
 {
   # base case: data by name, statistic is function by name
-  r <- permutationTest2(treatment = treat, v12, mean, alternative = "less", seed = 1)
+  r <- permutationTest2(treatment = treat, v12, mean,
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # data expression
-  r <- permutationTest2(treatment = treat, (v12), mean, alternative = "less", seed = 1)
+  r <- permutationTest2(treatment = treat, (v12), mean,
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # args.stat
-  r <- permutationTest2(treatment = treat, v12, mean, args.stat = list(trim = .25), alternative = "less", seed = 1)
+  r <- permutationTest2(treatment = treat, v12, mean,
+                        args.stat = list(trim = .25),
+                        alternative = "less", seed = 1, R = 999)
   all.equal(RreplicatesTrim, as.vector(r$replicates))
 }
 
 {
   # inline function
-  r <- permutationTest2(treatment = treat, v12, function(z) mean(z), alternative = "less", seed = 1)
+  r <- permutationTest2(treatment = treat, v12, function(z) mean(z),
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # data frame,
-  r <- permutationTest2(treatment = treat, df12, colMeans, alternative = "less", seed = 1)
+  r <- permutationTest2(treatment = treat, df12, colMeans,
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # data expression, data frame
-  r <- permutationTest2(treatment = treat, df12, colMeans, alternative = "less", seed = 1)
+  r <- permutationTest2(treatment = treat, df12, colMeans,
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # data expression, matrix
-  r <- permutationTest2(treatment = treat, as.matrix(df12), colMeans, alternative = "less", seed = 1)
+  r <- permutationTest2(treatment = treat, as.matrix(df12), colMeans,
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # data frame, treatment in data frame
-  r <- permutationTest2(treatment = treatdf, df12t, function(x) mean(x[[1]]), alternative = "less", seed = 1)
+  r <- permutationTest2(treatment = treatdf, df12t, function(x) mean(x[[1]]),
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
@@ -111,31 +120,36 @@
 ### statistic is expression
 {
   # data by name
-  r <- permutationTest2(treatment = treat, v12, mean(v12), alternative = "less", seed = 1)
+  r <- permutationTest2(treatment = treat, v12, mean(v12),
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # data by name, but user referred to 'data'
-  r <- permutationTest2(treatment = treat, v12, mean(data), alternative = "less", seed = 1)
+  r <- permutationTest2(treatment = treat, v12, mean(data),
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # data as expression, refer to 'data'
-  r <- permutationTest2(treatment = treat, (v12), mean(data), alternative = "less", seed = 1)
+  r <- permutationTest2(treatment = treat, (v12), mean(data),
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # data frame
-  r <- permutationTest2(treatment = treat, df12, mean(v), alternative = "less", seed = 1)
+  r <- permutationTest2(treatment = treat, df12, mean(v),
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # data frame expression
-  r <- permutationTest2(treatment = treat, (df12), mean(v), alternative = "less", seed = 1)
+  r <- permutationTest2(treatment = treat, (df12), mean(v),
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
@@ -150,43 +164,50 @@
 ### statistic is function
 {
   # base case: data by name, statistic is function by name
-  r <- permutationTest2(v1, data2 = v2, mean, alternative = "less", seed = 1)
+  r <- permutationTest2(v1, data2 = v2, mean,
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # data expression
-  r <- permutationTest2((v1), data2 = (v2), mean, alternative = "less", seed = 1)
+  r <- permutationTest2((v1), data2 = (v2), mean,
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # args.stat
-  r <- permutationTest2(v1, data2 = v2, mean, args.stat = list(trim = .25), alternative = "less", seed = 1)
+  r <- permutationTest2(v1, data2 = v2, mean, args.stat = list(trim = .25),
+                        alternative = "less", seed = 1, R = 999)
   all.equal(RreplicatesTrim, as.vector(r$replicates))
 }
 
 {
   # inline function
-  r <- permutationTest2(v1, data2 = v2, function(z) mean(z), alternative = "less", seed = 1)
+  r <- permutationTest2(v1, data2 = v2, function(z) mean(z),
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # data frame,
-  r <- permutationTest2(df1, data2 = df2, colMeans, alternative = "less", seed = 1)
+  r <- permutationTest2(df1, data2 = df2, colMeans,
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # data expression, data frame,
-  r <- permutationTest2((df1), data2 = (df2), colMeans, alternative = "less", seed = 1)
+  r <- permutationTest2((df1), data2 = (df2), colMeans,
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # data expression, matrix
-  r <- permutationTest2(as.matrix(df1), data2 = as.matrix(df2), colMeans, alternative = "less", seed = 1)
+  r <- permutationTest2(as.matrix(df1), data2 = as.matrix(df2), colMeans,
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
@@ -194,25 +215,29 @@
 ### statistic is expression
 {
   # data by name  (refer to 'data')
-  r <- permutationTest2(v1, data2 = v2, mean(data), alternative = "less", seed = 1)
+  r <- permutationTest2(v1, data2 = v2, mean(data),
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # data as expression, refer to 'data'
-  r <- permutationTest2((v1), data2 = (v2), mean(data), alternative = "less", seed = 1)
+  r <- permutationTest2((v1), data2 = (v2), mean(data),
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # data frame
-  r <- permutationTest2(df1, data2 = df2, mean(v), alternative = "less", seed = 1)
+  r <- permutationTest2(df1, data2 = df2, mean(v),
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 
 {
   # data frame expression
-  r <- permutationTest2((df1), data2 = (df2), mean(v), alternative = "less", seed = 1)
+  r <- permutationTest2((df1), data2 = (df2), mean(v),
+                        alternative = "less", seed = 1, R = 999)
   compareFun(r)
 }
 

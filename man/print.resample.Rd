@@ -4,7 +4,7 @@
 % license that can be found in the LICENSE file or at
 % http://opensource.org/licenses/BSD-3-Clause
 
-\name{plot.resample}
+\name{print.resample}
 \alias{plot.resample}
 \alias{hist.resample}
 \alias{qqnorm.resample}
@@ -14,18 +14,20 @@
   Methods for common generic functions for resample objects
 }
 \description{
-  Methods for common generic functions. The methods for
-  \code{\link[graphics]{plot}},
-  \code{\link[graphics]{hist}},
-  \code{\link[stats]{qqnorm}}, and
-  \code{\link[stats]{quantile}} operate primarily on the replicates.
+  Methods for common generic functions. The methods
+  operate primarily on the replicates
+  (resampled statistics).
 }
 \usage{
-\method{print}{resample}(x, ...)
-\method{plot}{resample}(x, ..., resampleColumns = 1:x$p, xlim = NULL, xlab = NULL, main = "")
-\method{hist}{resample}(x, ..., resampleColumns = 1:x$p, xlim = NULL, xlab = NULL, main = "")
-\method{qqnorm}{resample}(y, ..., resampleColumns = 1:y$p, ylab = NULL)
-\method{quantile}{resample}(x, ..., type = 6)
+\method{print}{resample}(x, \dots)
+\method{hist}{resample}(x, \dots, resampleColumns = 1:x$p, xlim = NULL,
+                xlab = NULL, main = "", col = "blue", border = 0,
+                breaks = "FD", showObserved = TRUE,
+                legend = TRUE, args.legend = NULL)
+\method{plot}{resample}(x, \dots)
+\method{qqnorm}{resample}(y, \dots, resampleColumns = 1:y$p, ylab = NULL,
+                pch = if(y$R < 100) 1 else ".")
+\method{quantile}{resample}(x, \dots)
 }
 \arguments{
   \item{x,y}{
@@ -36,7 +38,8 @@
     \code{\link{permutationTest2}}.
 }
   \item{\dots}{
-    additional arguments passed to the corresponding generic function.
+    additional arguments passed to the corresponding generic function.\cr
+    For \code{plot.resample}, these are passed to \code{hist.resample}.
 }
   \item{resampleColumns}{
     integer subscripts, or names of statistics.
@@ -52,42 +55,72 @@
   \item{main}{
     main title
 }
-  \item{type}{
-    the \code{type} argument for \code{\link[stats]{quantile}}.
-    The value used here gives somewhat wider quantiles than the usual
-    default, which are appropriate for resampling.
+  \item{col}{
+    color used to fill bars, see \code{\link[graphics]{hist}}.
+}
+  \item{border}{
+    color of the order around the bars, see \code{\link[graphics]{hist}}.
+}
+  \item{breaks}{
+    method for computing breaks, see \code{\link[graphics]{hist}}.
+}
+  \item{showObserved}{
+    logical, if \code{TRUE} then vertical lines are shown at the
+    observed statistic and mean of the bootstrap replicates.
+}
+  \item{legend}{
+    logical, if \code{TRUE} a legend is added. Not used if
+    \code{showObserved = FALSE}.
+}
+  \item{args.legend}{
+    \code{NULL} or a list of arguments to pass to
+    \code{\link[graphics]{legend}}.
+}
+  \item{pch}{
+    plotting character, see \code{\link[graphics]{par}}.
 }
 }
 \value{
-For \code{quantile.resample}, a matrix with one column for each
-statistic.
+  For \code{quantile.resample}, a matrix with one row for each
+  statistic and one column for each value in \code{probs}.
+  This uses \code{type=6} when calling
+  \code{\link[stats]{quantile}}, for wider (more accurate) quantiles than
+  the usual default.
 
 The other functions are not called for their return values.
 }
 \details{
-  \code{hist.resample} and \code{plot.resample} are identical; they
-  display a histogram overlaid with a density plot, with the observed value
-  of the statistic indicated.
+  \code{hist.resample} displays a histogram overlaid with a density
+  plot, with the observed value of the statistic indicated.
+
+  \code{plot.resample} currently just calls \code{hist.resample}.
 }
 \author{
-  Tim Hesterberg <timhesterberg@gmail.com>
+  Tim Hesterberg \email{timhesterberg@gmail.com},\cr
+  \url{http://www.timhesterberg.net/bootstrap}
 }
 \seealso{
+  \code{\link{resample-package}},
   \code{\link{bootstrap}},
   \code{\link{bootstrap2}},
-  \code{\link{permutationTest}},
-  \code{\link{permutationTest2}}.
+  \code{\link{jackknife}},
+  \code{\link{permutationTest}},\cr
+  \code{\link{permutationTest2}},
+  \code{\link[stats]{quantile}}.
 }
 \examples{
-mydata <- data.frame(a = runif(40), b = rnorm(40))
-boot1 <- bootstrap(mydata, colMeans)
-boot1
-par(mfrow = c(2,1))
-plot(boot1)
-hist(boot1) # same as plot
-qqnorm(boot1)
-par(mfrow = c(1,1))
-quantile(boot1, probs = c(.25, .75))
+\dontrun{
+# See full set of examples in resample-package
+data(Verizon)
+CLEC <- with(Verizon, Time[Group == "CLEC"])
+bootC <- bootstrap(CLEC, mean, seed = 0)
+print(bootC)
+hist(bootC)
+qqnorm(bootC)
+quantile(bootC, probs = c(.25, .975))
+# That is the percentile interval with expand = FALSE
+CI.percentile(bootC)
+}
 }
 \keyword{nonparametric}
 \keyword{htest}

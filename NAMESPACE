@@ -1,8 +1,12 @@
-useDynLib(resample, anyNA_sym = anyNA)
-
 export("bootstrap",
        "bootstrap2",
        "hist.resample",
+       "jackknife",
+       "CI.bca",
+       "CI.bootstrapT",
+       "CI.percentile",
+       "CI.t",
+       "limits.bootstrapT",
        "limits.percentile",
        "limits.t",
        "permutationTest",
@@ -11,7 +15,22 @@ export("bootstrap",
        "print.resample",
        "qqnorm.resample",
        "quantile.resample",
+       "Quantile",
        "resample",
        "samp.bootstrap",
-       "samp.permute"
+       "samp.permute",
+       "IfElse",
+       "cat0",
+       "cat0n",
+       "catn",
+       "colStdevs",
+       "colVars",
+       "ExpandProbs"
        )
+importFrom(graphics, plot, hist)
+importFrom(stats, quantile, qqnorm)
+S3method(hist, resample)
+S3method(plot, resample)
+S3method(print, resample)
+S3method(qqnorm, resample)
+S3method(quantile, resample)

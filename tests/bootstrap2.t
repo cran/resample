@@ -6,7 +6,7 @@
 
 # Tests for bootstrap2
 
-# do.test("~/resample/tests/bootstrap2.t")
+# do.test("~/resample/resample/tests/bootstrap2.t")
 
 {
   set.seed(0)
@@ -19,7 +19,7 @@
   treat <- rep(1:2, c(20, 25))
   df12t <- cbind(df12, treatdf = treat)
 
-  # Do resampling by hand, for comparison
+  # Do resampling using vanilla R, for comparison
   Robserved <- mean(v1) - mean(v2)
   Robserved1 <- mean(v1)
   Robserved2 <- mean(v2)
@@ -45,7 +45,7 @@
     Robserved         # -.585
     mean(Rreplicates) # -.590
     qqnorm(Rreplicates)
-    hist(Rreplicates); abline(v = Robserved, col="red")
+    hist(Rreplicates); abline(v = Robserved, col = "red")
   }
   compareFun <- function(r) {
     r2 <- r$resultsBoth
@@ -71,49 +71,53 @@
 ### statistic is function
 {
   # base case: data by name, statistic is function by name
-  r <- bootstrap2(treatment = treat, v12, mean, seed = 1)
+  r <- bootstrap2(treatment = treat, v12, mean, seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # data expression
-  r <- bootstrap2(treatment = treat, (v12), mean, seed = 1)
+  r <- bootstrap2(treatment = treat, (v12), mean, seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # args.stat
-  r <- bootstrap2(treatment = treat, v12, mean, args.stat = list(trim = .25), seed = 1)
+  r <- bootstrap2(treatment = treat, v12, mean, args.stat = list(trim = .25),
+                  seed = 1, R = 1000)
   all.equal(RreplicatesTrim, as.vector(r$replicates))
 }
 
 {
   # inline function
-  r <- bootstrap2(treatment = treat, v12, function(z) mean(z), seed = 1)
+  r <- bootstrap2(treatment = treat, v12, function(z) mean(z),
+                  seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # data frame,
-  r <- bootstrap2(treatment = treat, df12, colMeans, seed = 1)
+  r <- bootstrap2(treatment = treat, df12, colMeans, seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # data expression, data frame
-  r <- bootstrap2(treatment = treat, df12, colMeans, seed = 1)
+  r <- bootstrap2(treatment = treat, df12, colMeans, seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # data expression, matrix
-  r <- bootstrap2(treatment = treat, as.matrix(df12), colMeans, seed = 1)
+  r <- bootstrap2(treatment = treat, as.matrix(df12), colMeans,
+                  seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # data frame, treatment in data frame
-  r <- bootstrap2(treatment = treatdf, df12t, function(x) mean(x[[1]]), seed = 1)
+  r <- bootstrap2(treatment = treatdf, df12t, function(x) mean(x[[1]]),
+                  seed = 1, R = 1000)
   compareFun(r)
 }
 
@@ -121,31 +125,31 @@
 ### statistic is expression
 {
   # data by name
-  r <- bootstrap2(treatment = treat, v12, mean(v12), seed = 1)
+  r <- bootstrap2(treatment = treat, v12, mean(v12), seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # data by name, but user referred to 'data'
-  r <- bootstrap2(treatment = treat, v12, mean(data), seed = 1)
+  r <- bootstrap2(treatment = treat, v12, mean(data), seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # data as expression, refer to 'data'
-  r <- bootstrap2(treatment = treat, (v12), mean(data), seed = 1)
+  r <- bootstrap2(treatment = treat, (v12), mean(data), seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # data frame
-  r <- bootstrap2(treatment = treat, df12, mean(v), seed = 1)
+  r <- bootstrap2(treatment = treat, df12, mean(v), seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # data frame expression
-  r <- bootstrap2(treatment = treat, (df12), mean(v), seed = 1)
+  r <- bootstrap2(treatment = treat, (df12), mean(v), seed = 1, R = 1000)
   compareFun(r)
 }
 
@@ -160,43 +164,45 @@
 ### statistic is function
 {
   # base case: data by name, statistic is function by name
-  r <- bootstrap2(v1, data2 = v2, mean, seed = 1)
+  r <- bootstrap2(v1, data2 = v2, mean, seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # data expression
-  r <- bootstrap2((v1), data2 = (v2), mean, seed = 1)
+  r <- bootstrap2((v1), data2 = (v2), mean, seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # args.stat
-  r <- bootstrap2(v1, data2 = v2, mean, args.stat = list(trim = .25), seed = 1)
+  r <- bootstrap2(v1, data2 = v2, mean, args.stat = list(trim = .25),
+                  seed = 1, R = 1000)
   all.equal(RreplicatesTrim, as.vector(r$replicates))
 }
 
 {
   # inline function
-  r <- bootstrap2(v1, data2 = v2, function(z) mean(z), seed = 1)
+  r <- bootstrap2(v1, data2 = v2, function(z) mean(z), seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # data frame,
-  r <- bootstrap2(df1, data2 = df2, colMeans, seed = 1)
+  r <- bootstrap2(df1, data2 = df2, colMeans, seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # data expression, data frame,
-  r <- bootstrap2((df1), data2 = (df2), colMeans, seed = 1)
+  r <- bootstrap2((df1), data2 = (df2), colMeans, seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # data expression, matrix
-  r <- bootstrap2(as.matrix(df1), data2 = as.matrix(df2), colMeans, seed = 1)
+  r <- bootstrap2(as.matrix(df1), data2 = as.matrix(df2), colMeans,
+                  seed = 1, R = 1000)
   compareFun(r)
 }
 
@@ -204,25 +210,25 @@
 ### statistic is expression
 {
   # data by name  (refer to 'data')
-  r <- bootstrap2(v1, data2 = v2, mean(data), seed = 1)
+  r <- bootstrap2(v1, data2 = v2, mean(data), seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # data as expression, refer to 'data'
-  r <- bootstrap2((v1), data2 = (v2), mean(data), seed = 1)
+  r <- bootstrap2((v1), data2 = (v2), mean(data), seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # data frame
-  r <- bootstrap2(df1, data2 = df2, mean(v), seed = 1)
+  r <- bootstrap2(df1, data2 = df2, mean(v), seed = 1, R = 1000)
   compareFun(r)
 }
 
 {
   # data frame expression
-  r <- bootstrap2((df1), data2 = (df2), mean(v), seed = 1)
+  r <- bootstrap2((df1), data2 = (df2), mean(v), seed = 1, R = 1000)
   compareFun(r)
 }
 
