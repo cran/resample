@@ -33,13 +33,13 @@ customers of the "Competitive" and "Incumbent" local exchange carrior.
 \references{
   Hesterberg, Tim (2014), What Teachers Should Know about the
   Bootstrap: Resampling in the Undergraduate Statistics Curriculum,
-  \url{http://arxiv.org/abs/1411.5279}.
+  \url{https://arxiv.org/abs/1411.5279}.
 }
 \seealso{
 See \code{\link{resample-package}} for an overview of resampling functions.
 }
 \examples{
-\dontrun{
+\donttest{
 data(TV); summary(TV)
 Basic <- with(TV, Time[Cable == "Basic"])
 Extended <- with(TV, Time[Cable == "Extended"])

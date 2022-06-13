@@ -4,7 +4,7 @@
 % license that can be found in the LICENSE file or at
 % http://opensource.org/licenses/BSD-3-Clause
 
-\name{CI.percentile}
+\name{CI}
 \alias{CI.percentile}
 \alias{CI.t}
 \alias{CI.bca}
@@ -16,18 +16,23 @@ Bootstrap confidence intervals
 Bootstrap confidence intervals - percentile method or t interval.
 }
 \usage{
-CI.percentile(x, probs = c(0.025, 0.975), expand = TRUE, ...)
-CI.t(x, probs = c(0.025, 0.975))
-CI.bca(x, probs = c(0.025, 0.975), expand = TRUE, L = NULL, ...)
-CI.bootstrapT(x, probs = c(0.025, 0.975))
+CI.percentile(x, confidence = 0.95, expand = TRUE, ...,
+              probs = sort(1 + c(-1, 1) * confidence) / 2)
+CI.t(x, confidence = 0.95, expand = TRUE,
+              probs = sort(1 + c(-1, 1) * confidence) / 2)
+CI.bca(x, confidence = 0.95,
+              expand = TRUE, L = NULL,
+              probs = sort(1 + c(-1, 1) * confidence) / 2)
+CI.bootstrapT(x, confidence = 0.95,
+              probs = sort(1 + c(-1, 1) * confidence) / 2)
 }
 \arguments{
   \item{x}{
     a \code{\link{bootstrap}} or \code{\link{bootstrap}} object.
 }
-  \item{probs}{
-    probability values, between 0 and 1. The default vector
-    \code{c(0.025, 0.975)} gives a 95\% two-sided interval.
+  \item{confidence}{
+    confidence level, between 0 and 1. The default 0.95
+    gives a 95\% two-sided interval.
 }
   \item{expand}{
     logical, if \code{TRUE} then use modified percentiles for better
@@ -36,6 +41,11 @@ CI.bootstrapT(x, probs = c(0.025, 0.975))
   \item{\dots}{
     additional arguments to pass to \code{\link{quantile.resample}}
     and \code{\link[stats]{quantile}}.
+}
+  \item{probs}{
+    probability values, between 0 and 1. \code{confidence = 0.95}
+    corresponds to \code{probs = c(0.025, 0.975)}.
+    If this is supplied then confidence is ignored.
 }
   \item{L}{vector of length \code{n}, empirical influence function
     values. If not supplied this is computed using \code{\link{jackknife}}.
@@ -58,11 +68,11 @@ CI.bootstrapT(x, probs = c(0.025, 0.975))
   This discusses the expanded percentile interval:
   Hesterberg, Tim (2014), What Teachers Should Know about the
   Bootstrap: Resampling in the Undergraduate Statistics Curriculum,
-  \url{http://arxiv.org/abs/1411.5279}.
+  \url{https://arxiv.org/abs/1411.5279}.
 }
 \author{
   Tim Hesterberg \email{timhesterberg@gmail.com},\cr
-  \url{http://www.timhesterberg.net/bootstrap}
+  \url{https://www.timhesterberg.net/bootstrap-and-resampling}
 }
 \seealso{
 \code{\link{bootstrap}},
@@ -70,7 +80,7 @@ CI.bootstrapT(x, probs = c(0.025, 0.975))
 \code{\link{ExpandProbs}} (for the expanded intervals).
 }
 \examples{
-\dontrun{
+\donttest{
 # See full set of examples in resample-package, including different
 # ways to call all four functions depending on the structure of the data.
 data(Verizon)

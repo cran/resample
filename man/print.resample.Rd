@@ -97,7 +97,7 @@ The other functions are not called for their return values.
 }
 \author{
   Tim Hesterberg \email{timhesterberg@gmail.com},\cr
-  \url{http://www.timhesterberg.net/bootstrap}
+  \url{https://www.timhesterberg.net/bootstrap-and-resampling}
 }
 \seealso{
   \code{\link{resample-package}},
@@ -109,7 +109,7 @@ The other functions are not called for their return values.
   \code{\link[stats]{quantile}}.
 }
 \examples{
-\dontrun{
+\donttest{
 # See full set of examples in resample-package
 data(Verizon)
 CLEC <- with(Verizon, Time[Group == "CLEC"])

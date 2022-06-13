@@ -57,7 +57,7 @@ jackknife(data, statistic, args.stat = NULL,
 }
 \author{
   Tim Hesterberg \email{timhesterberg@gmail.com},\cr
-  \url{http://www.timhesterberg.net/bootstrap}
+  \url{https://www.timhesterberg.net/bootstrap-and-resampling}
 }
 \note{
 The current version only handles a single sample.
@@ -66,7 +66,7 @@ The current version only handles a single sample.
 \code{\link{resample-package}}.
 }
 \examples{
-\dontrun{
+\donttest{
 # See full set of examples in resample-package
 data(Verizon)
 CLEC <- with(Verizon, Time[Group == "CLEC"])

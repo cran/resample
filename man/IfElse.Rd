@@ -40,7 +40,7 @@ not used, and \code{yes} and \code{no} are vectors the same length as
 }
 \author{
   Tim Hesterberg \email{timhesterberg@gmail.com},\cr
-  \url{http://www.timhesterberg.net/bootstrap}
+  \url{https://www.timhesterberg.net/bootstrap-and-resampling}
 }
 \seealso{
 \code{\link[base]{ifelse}}, \code{\link[base]{if}}.}

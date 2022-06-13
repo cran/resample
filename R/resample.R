@@ -88,7 +88,7 @@ resample <- function(data, resampleFun, sampler, R = 10000,
     indices <- sampler(n, BB, ...)
     for(j in 1:BB) {
       theta <- try(resampleFun(data, indices[, j]), silent = TRUE)
-      if(is(theta, "try-error")) {
+      if(inherits(theta, "try-error")) {
         failures <- c(failures, B0 + j)
       } else if(p) {
         replicates[B0 + j, ] <- theta
@@ -190,12 +190,15 @@ Quantile <- function(x, ..., type = 6){
   quantile(x, ..., type = type)
 }
 
+
+
 if(FALSE) { # manual testing code
   r <- bootstrap((xDF), colMeans) # xDF defined in bootstrap.R
   plot(r, resampleColumns = 2)
   qqnorm(r, resampleColumns = 2)
   quantile(r, probs = c(.025, .975))
-  limits.percentile(r, probs = c(.025, .975))
+  CI.percentile(r, probs = c(.025, .975))
+  replicates(r)
 
   r <- bootstrap2(treatment = t9, x9, mean)
   plot(r)

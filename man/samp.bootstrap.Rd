@@ -74,11 +74,11 @@ samp.permute(n, R, size = n - reduceSize, reduceSize = 0,
   Hesterberg, Tim C. (2004), Unbiasing the Bootstrap-Bootknife Sampling
   vs. Smoothing, Proceedings of the Section on Statistics and the
   Environment, American Statistical Association, 2924-2930,
-  \url{http://www.timhesterberg.net/articles/JSM04-bootknife.pdf}.
+  \url{https://drive.google.com/file/d/1eUo2nDIrd8J_yuh_uoZBaZ-2XCl_5pT7}.
 }
 \author{
   Tim Hesterberg \email{timhesterberg@gmail.com},\cr
-  \url{http://www.timhesterberg.net/bootstrap}
+  \url{https://www.timhesterberg.net/bootstrap-and-resampling}
 }
 \seealso{
   \code{\link{resample-package}}.

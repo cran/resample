@@ -1,0 +1,91 @@
+Quick comparison of
+	"bootstrap"   Efron & Tibshirani
+	"boot"        Canty, Davison & Hinkley
+	"S+Resample"  S+ only
+	"resample"    R only
+
+--------------------------------------------------
+The `bootstrap' library contains code used in Efron & Tibshirani,
+"An Introduction to the Bootstrap", 1993.
+* limited scope, with 8 functions intended to be called by users, 11 total
+* no print, plot, or summary methods methods
+* user must write functions to calculate their statistic in different forms
+  expected by the eight functions,
+* short and simple code, good for someone who wants to write their own
+  code using this as an example.
+
+# Example:
+b <- bootstrap(fuel.frame$Fuel, 1000, mean)
+b  # raw results
+c(original = mean(fuel.frame$Fuel),
+  mean = mean(b$thetastar),
+  bias = mean(b$thetastar) - mean(fuel.frame$Fuel),
+  stderr = stdev(b$thetastar))
+hist(b$thetastar)
+qqnorm(b$thetastar)
+my.weighted.mean <- function(p, x) sum(x*p)/sum(p)
+abcnon(fuel.frame$Fuel, my.weighted.mean)$limits
+
+--------------------------------------------------
+The `boot' library contains code by Angelo Canty for Davison & Hinkley,
+"Bootstrap Methods and their Applications", 1997.
+* More extensive scope, 75 functions total
+* has 4 print methods and 2 plot methods
+* user must write functions to calculate their statistic in different forms
+* longer code, handles more cases (e.g. stratified sampling), still
+  suitable for people to use as an example to modify
+
+# Example:
+my.mean <- function(x,i) mean(x[i])
+b <- boot(fuel.frame$Fuel, my.mean, 1000, stype="i")
+b  # formatted summary of results
+plot(b)
+my.weighted.mean <- function(x, w) sum(w*x)/sum(w)
+abc.ci(fuel.frame$Fuel, my.weighted.mean)
+
+
+--------------------------------------------------
+The S+Resample library has been available since June 2002.
+* Wide scope, 223 functions
+  bootstrap, jackknife, permutation tests, cross validation,
+  bootstrapping prediction errors, parametric and smoothed bootstrapping,
+  tilting,
+  bootstrap and permutation test for difference of statistic on 2 samples,
+* variety of resampling methods: stratified, by subject, finite population,
+  block bootstrap, subsampling,
+* has print, plot, qqnorm, and summary methods,
+* easier to use interface, can give function or expression, and use
+  variables in a data frame,
+* ugly code - you don't want to modify this for your own use,
+* many routines coded in C for speed,
+* on Windows, has more extended graphical interface.
+
+# Example:
+b <- bootstrap(fuel.frame$Fuel, mean)
+b <- bootstrap(fuel.frame, mean(Fuel))  # alternate form
+b  # formatted summary of results
+plot(b)
+qqnorm(b)
+limits.bca(b)
+
+# The library also provides support for two-sample bootstrapping
+# and permutation tests, e.g.
+bootstrap2(fuel.frame, mean(Weight), treatment = Type == "Sporty")
+
+--------------------------------------------------
+The `resample' package for R has been available since 2014, on CRAN.
+
+This is a limited copy of S+Resample, focusing on ease of use for the
+most common tasks -- one- and two-sample bootstrap and permutation tests.
+I'll add to this over time.
+
+b <- bootstrap(fuel.frame$Fuel, mean)
+b <- bootstrap(fuel.frame, mean(Fuel))  # alternate form
+b  # formatted summary of results
+plot(b)
+qqnorm(b)
+CI.bca(b)
+
+# The library also provides support for two-sample bootstrapping
+# and permutation tests, e.g.
+bootstrap2(fuel.frame, mean(Weight), treatment = Type == "Sporty")

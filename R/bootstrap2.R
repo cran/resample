@@ -170,14 +170,14 @@ bootstrap2 <- function(data, statistic,
 
 if(FALSE) {
   x9 <- 1:9
-  xDF <- data.frame(X = x9, Y = 2*x9)
+  xDF <- data.frame(X = x9, Y = 2 * x9)
   t9 <- letters[c(1, 1, 1, 2, 1, 2, 1, 2, 1)]
   xDF1 <- xDF[t9 == "a", ]
   xDF2 <- xDF[t9 == "b", ]
   x91 <- x9[t9 == "a"]
   x92 <- x9[t9 == "b"]
 
-  source("~/resample/R/bootstrap2.R")
+  source("~/Rlang/resample/resample/R/bootstrap2.R")
 
   ##### treatment
   ### statistic by name
@@ -268,5 +268,5 @@ if(FALSE) {
   bootstrap2((xDF1), data2 = (xDF2), mean(X), R=100)
 
 
-  source("~/resample/R/bootstrap2.R")
+  source("~/Rlang/resample/resample/R/bootstrap2.R")
 }

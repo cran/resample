@@ -168,7 +168,7 @@ permutationTest2(data, statistic, treatment, data2 = NULL, R = 9999,
 
 \author{
   Tim Hesterberg \email{timhesterberg@gmail.com},\cr
-  \url{http://www.timhesterberg.net/bootstrap}
+  \url{https://www.timhesterberg.net/bootstrap-and-resampling}
 }
 \seealso{
 \code{\link{resample-package}},
@@ -177,7 +177,7 @@ permutationTest2(data, statistic, treatment, data2 = NULL, R = 9999,
 \code{\link{CI.t}}.
 }
 \examples{
-\dontrun{
+\donttest{
 # See full set of examples in resample-package, including different
 # ways to call the functions depending on the structure of the data.
 data(Verizon)

@@ -62,14 +62,14 @@
       #   bootstrap(myVector, mean(data))
       # where user gives expression using data instead of myVector
       temp <- all.names(substituteStatistic)
-      if(!is(data, "data.frame") &&
+      if(!is.data.frame(data) &&
          is.element("data", temp) &&
          !is.element(as.character(substituteData), temp))
         substituteData <- "data"
     }
     ftext <- paste0("function(data, ii) { ",
                     substituteData, "<-", subscriptCall, "\n",
-                    IfElse(is(data, "data.frame"),
+                    IfElse(is.data.frame(data),
                            paste0("eval(Quote(", deparse(substituteStatistic),
                                   "), ", substituteData, ")"),
                            deparse(substituteStatistic)),
@@ -128,7 +128,7 @@ if(FALSE) {
     print(f(data, 1:IfElse(is.null(dim(data)), length(data), nrow(data))))
     invisible(f)
   }
-  source("~/resample/R/MakeFunction.R")
+  source("~/Rlang/resample/resample/R/MakeFunction.R")
   x9 <- 1:9
   xDF <- data.frame(a = 1:5, b = 2:6)
 
@@ -181,5 +181,5 @@ if(FALSE) {
 
   # TODO: turn those into do.test
 
-  source("~/resample/R/MakeFunction.R")
+  source("~/Rlang/resample/resample/R/MakeFunction.R")
 }

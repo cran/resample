@@ -6,9 +6,6 @@ export("bootstrap",
        "CI.bootstrapT",
        "CI.percentile",
        "CI.t",
-       "limits.bootstrapT",
-       "limits.percentile",
-       "limits.t",
        "permutationTest",
        "permutationTest2",
        "plot.resample",
@@ -27,8 +24,11 @@ export("bootstrap",
        "colVars",
        "ExpandProbs"
        )
-importFrom(graphics, plot, hist)
-importFrom(stats, quantile, qqnorm)
+importFrom(graphics, "plot", "hist", "lines", "points", "segments")
+importFrom("methods", "is")
+importFrom(stats, "quantile", "approx", "density", "pnorm", "qnorm",
+           "qqnorm", "qt", "runif", "var")
+
 S3method(hist, resample)
 S3method(plot, resample)
 S3method(print, resample)

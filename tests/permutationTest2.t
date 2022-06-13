@@ -6,7 +6,7 @@
 
 # Tests for permutationTest2
 
-# do.test("~/resample/resample/tests/permutationTest2.t")
+# do.test("~/Rlang/resample/resample/tests/permutationTest2.t")
 
 {
   set.seed(0)
@@ -115,6 +115,13 @@
   compareFun(r)
 }
 
+{
+  # seed not supplied
+  set.seed(1)
+  r <- permutationTest2(treatment = treat, v12, mean,
+                        alternative = "less", R = 999)
+  compareFun(r)
+}
 
 
 ### statistic is expression
@@ -238,6 +245,14 @@
   # data frame expression
   r <- permutationTest2((df1), data2 = (df2), mean(v),
                         alternative = "less", seed = 1, R = 999)
+  compareFun(r)
+}
+
+{
+  # seed not supplied, data and data2
+  set.seed(1)
+  r <- permutationTest2(v1, data2 = v2, mean,
+                        alternative = "less", R = 999)
   compareFun(r)
 }
 

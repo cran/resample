@@ -33,7 +33,7 @@ Quantile(x, ..., type = 6)
 }
 \author{
   Tim Hesterberg \email{timhesterberg@gmail.com},\cr
-  \url{http://www.timhesterberg.net/bootstrap}
+  \url{https://www.timhesterberg.net/bootstrap-and-resampling}
 }
 \seealso{
 \code{\link[stats]{quantile}}

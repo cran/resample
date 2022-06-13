@@ -90,7 +90,7 @@ samp.permute <- function(n, R, size = n - reduceSize, reduceSize = 0,
 
 
 if(FALSE) {
-  source("~/resample/R/samplers.R")
+  source("~/Rlang/resample/resample/R/samplers.R")
 
   set.seed(0)
   i1 <- samp.bootstrap(10, 12)

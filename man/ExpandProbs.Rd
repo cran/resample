@@ -43,11 +43,11 @@ A vector like \code{probs}, but with values closer to 0 and 1.
   This discusses the expanded percentile interval:
   Hesterberg, Tim (2014), What Teachers Should Know about the
   Bootstrap: Resampling in the Undergraduate Statistics Curriculum,
-  \url{http://arxiv.org/abs/1411.5279}.
+  \url{https://arxiv.org/abs/1411.5279}.
 }
 \author{
   Tim Hesterberg \email{timhesterberg@gmail.com},\cr
-  \url{http://www.timhesterberg.net/bootstrap}
+  \url{https://www.timhesterberg.net/bootstrap-and-resampling}
 }
 \seealso{
   \code{\link{CI.percentile}},

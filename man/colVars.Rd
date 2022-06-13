@@ -32,14 +32,14 @@ colStdevs(x, \dots)
 }
 \author{
   Tim Hesterberg \email{timhesterberg@gmail.com},\cr
-  \url{http://www.timhesterberg.net/bootstrap}
+  \url{https://www.timhesterberg.net/bootstrap-and-resampling}
 }
 \seealso{
   \code{\link[base]{colSums}}, \code{\link[stats]{var}}, \code{\link[stats]{sd}}.
 }
 \note{
   There are better versions of these functions in the aggregate package\cr
-  \url{http://www.timhesterberg.net/r-packages}.
+  \url{https://www.timhesterberg.net/r-packages}.
   }
 \examples{
 x <- matrix(rnorm(12), 4)

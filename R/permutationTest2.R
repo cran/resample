@@ -48,6 +48,10 @@ permutationTest2 <- function(data, statistic,
   dimData <- dim(data)
   stopifnot(length(dimData) <= 2)
   if(paired) stop("paired is not yet implemented") # TODO: implement it
+  if(is.null(seed)) { # Need to use the same seed in both calls to resample
+    .resampleSetSeed(NULL)
+    seed <- .Random.seed
+  }
 
   resultsBoth <- vector("list", 2)
   if(is.null(data2)) {                  # use treatment
@@ -158,7 +162,7 @@ permutationTest2 <- function(data, statistic,
 
 if(FALSE) {
   x9 <- 1:9
-  xDF <- data.frame(X = x9, Y = 2*x9)
+  xDF <- data.frame(X = x9, Y = 2 * x9)
   t9 <- letters[c(1, 1, 1, 2, 1, 2, 1, 2, 1)]
 
   x1 <- x9[t9 == "a"]
@@ -167,7 +171,7 @@ if(FALSE) {
   xDF2 <- data.frame(X = x2)
 
 
-  source("~/resample/R/permutationTest2.R")
+  source("~/Rlang/resample/resample/R/permutationTest2.R")
 
   ##### treatment
   ### statistic by name
@@ -262,5 +266,5 @@ if(FALSE) {
   .Random.seed <- temp$seed
   all.equal(temp, eval(temp$call))
 
-  source("~/resample/R/permutationTest2.R")
+  source("~/Rlang/resample/resample/R/permutationTest2.R")
 }

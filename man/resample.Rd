@@ -90,7 +90,7 @@ resample(data, resampleFun, sampler, R = 10000, seed = NULL,
 }
 \author{
   Tim Hesterberg \email{timhesterberg@gmail.com},\cr
-  \url{http://www.timhesterberg.net/bootstrap}
+  \url{https://www.timhesterberg.net/bootstrap-and-resampling}
 }
 
 \seealso{
@@ -105,7 +105,7 @@ resample(data, resampleFun, sampler, R = 10000, seed = NULL,
   \code{\link{resample-package}}.
 }
 \examples{
-\dontrun{
+\donttest{
 # See full set of examples in resample-package, including different
 # ways to call all the functions depending on the structure of the data.
 data(Verizon)

@@ -26,7 +26,7 @@ None (invisible \code{NULL}).
 }
 \author{
   Tim Hesterberg \email{timhesterberg@gmail.com},\cr
-  \url{http://www.timhesterberg.net/bootstrap}
+  \url{https://www.timhesterberg.net/bootstrap-and-resampling}
 }
 \seealso{
 \code{\link[base]{cat}}, \code{\link[base]{paste0}}.

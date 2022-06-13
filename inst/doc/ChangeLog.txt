@@ -1,6 +1,40 @@
 Change in the resample package, most recent first.
 
 
+---- 0.6    2022-06-12
+
+Add importFrom("methods", "is") to NAMESPACE,
+and Imports: methods to DESCRIPTION.
+
+Update URLs.
+
+
+---- 0.5    2017-2-13
+
+For confidence intervals, change argument list from e.g.
+  CI.percentile(x, probs = c(0.025, 0.975), others)
+to
+  CI.percentile(x, confidence = 0.95, others, probs = (computed from confidence))
+Can still specify probs by name.
+
+Add argument 'expand' to CI.t; by default intervals will now be wider.
+
+Add function 'replicates', to extract the resampled statistics as a data frame
+(to facilitate ggplot, etc.).
+
+Fix bug in CI.bca when there are multiple statistics
+(reported by Stephen Beckett).
+
+Fix bug in permutationTest2 when seed not supplied
+(reported by David Patterson).
+
+Use \donttest instead of \dontrun in help files.
+
+Improve formatting of help files.
+
+Remove deprecated functions limits.percentile, limits.t, limits.bootstrapT.
+
+
 ---- 0.4    2015-04-12
 
 Rename confidence interval functions, from limits.* to CI.*, e.g. CI.percentile.
@@ -21,7 +55,6 @@ with appropriate dimnames.
 Add a tolerance for use in computing P-values from permutation tests.
 
 Printing a permutationTest2 object now gives both sample sizes.
-
 
 
 ---- 0.3    2014-11-23

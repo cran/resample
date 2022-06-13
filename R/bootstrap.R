@@ -53,9 +53,9 @@ bootstrap <- function(data, statistic, R = 10000, args.stat = NULL,
 
 if(FALSE) {
   x9 <- 1:9
-  xDF <- data.frame(X = x9, Y = 2*x9)
+  xDF <- data.frame(X = x9, Y = 2 * x9)
 
-  source("~/resample/R/bootstrap.R")
+  source("~/Rlang/resample/resample/R/bootstrap.R")
 
   ### statistic by name
   # base case: data by name, statistic is function by name
@@ -98,5 +98,5 @@ if(FALSE) {
   .Random.seed <- temp$seed
   all.equal(temp, eval(temp$call))
 
-  source("~/resample/R/bootstrap.R")
+  source("~/Rlang/resample/resample/R/bootstrap.R")
 }

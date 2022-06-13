@@ -61,13 +61,13 @@ permutationTest <- function (data, statistic, R = 9999,
 
 if(FALSE) {
   x9 <- c(2:3, 1:7)
-  xDF <- data.frame(X = x9, Y = 2*x9)
+  xDF <- data.frame(X = x9, Y = 2 * x9)
   mystat <- function(x) sum(x * seq_along(x))
   mycor <- function(x) cor(x, seq_len(if(length(dim(x)) == 2) nrow(x) else length(x)))
 
 
 
-  source("~/resample/R/permutationTest.R")
+  source("~/Rlang/resample/resample/R/permutationTest.R")
 
   ### statistic by name
   # base case: data by name, statistic is function by name
@@ -110,5 +110,5 @@ if(FALSE) {
   # resampleColumns
   permutationTest(xDF, cor(X, Y), resampleColumns = "X", R=99)
 
-  source("~/resample/R/permutationTest.R")
+  source("~/Rlang/resample/resample/R/permutationTest.R")
 }

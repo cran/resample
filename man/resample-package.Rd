@@ -54,12 +54,12 @@
 }
 \section{New Versions}{
   I will post the newest versions to
-  \url{http://www.timhesterberg.net/r-packages}.
+  \url{https://www.timhesterberg.net/r-packages}.
   See that page to join a list for announcements of new versions.
 }
 \author{
   Tim Hesterberg \email{timhesterberg@gmail.com},\cr
-  \url{http://www.timhesterberg.net/bootstrap}
+  \url{https://www.timhesterberg.net/bootstrap-and-resampling}
 }
 \examples{
 data(Verizon)
@@ -75,9 +75,9 @@ CLEC <- with(Verizon, Time[Group == "CLEC"])
 # This code is flexible; there are different ways to call it,
 # depending on how the data are stored and on the statistic.
 
-## One-sample Bootstrap
 
-\dontrun{
+## One-sample Bootstrap
+\donttest{
 # Ordinary vector, give statistic as a function
 bootstrap(CLEC, mean)
 
@@ -97,7 +97,6 @@ bootstrap(CLEC, mean(CLEC, trim = .25))
 # Put function arguments into a separate list
 bootstrap(CLEC, mean, args.stat = list(trim = .25))
 }
-
 \dontshow{
 # Ordinary vector, give statistic as a function
 bootstrap(CLEC, mean, R = 100)
@@ -118,11 +117,9 @@ bootstrap(CLEC, mean(CLEC, trim = .25), R = 100)
 # Put function arguments into a separate list
 bootstrap(CLEC, mean, args.stat = list(trim = .25), R = 100)
 }
-
-
 ## One-sample jackknife
 
-# Like bootstrap. E.g.
+# Syntax is like bootstrap, e.g.
 jackknife(CLEC, mean)
 
 
@@ -132,8 +129,7 @@ jackknife(CLEC, mean)
 # one of them just be permuted. For the CLEC data,
 # we'll create an artificial variable.
 CLEC2 <- data.frame(Time = CLEC, index = 1:length(CLEC))
-
-\dontrun{
+\donttest{
 permutationTest(CLEC2, cor(Time, index),
                 resampleColumns = "index")
 # Could permute "Time" instead.
@@ -141,7 +137,6 @@ permutationTest(CLEC2, cor(Time, index),
 # resampleColumns not needed for variables outside 'data'
 permutationTest(CLEC, cor(CLEC, 1:length(CLEC)))
 }
-
 \dontshow{
 permutationTest(CLEC2, cor(Time, index),
                 resampleColumns = "index", R = 99)
@@ -151,55 +146,46 @@ permutationTest(CLEC2, cor(Time, index),
 permutationTest(CLEC, cor(CLEC, 1:length(CLEC)), R = 99)
 }
 
-
 ### Two-sample problems
 ## Different ways to specify data and statistic
 
 ## Two-sample bootstrap
 
 # Two data objects (one for each group)
+\donttest{bootstrap2(CLEC, data2 = ILEC, mean)}
 \dontshow{bootstrap2(CLEC, data2 = ILEC, mean, R=100)}
-\dontrun{bootstrap2(CLEC, data2 = ILEC, mean)}
-
 # data frame containing y variable(s) and a treatment variable
+\donttest{bootstrap2(Verizon, mean(Time), treatment = Group)}
 \dontshow{bootstrap2(Verizon, mean(Time), treatment = Group, R=100)}
-\dontrun{bootstrap2(Verizon, mean(Time), treatment = Group)}
-
 # treatment variable as a separate object
 temp <- Verizon$Group
+\donttest{bootstrap2(Verizon$Time, mean, treatment = temp)}
 \dontshow{bootstrap2(Verizon$Time, mean, treatment = temp, R=100)}
-\dontrun{bootstrap2(Verizon$Time, mean, treatment = temp)}
-
 
 ## Two-sample permutation test
 
-# Like bootstrap2. E.g.
+# Like bootstrap2, e.g.
+\donttest{permutationTest2(CLEC, data2 = ILEC, mean)}
 \dontshow{permutationTest2(CLEC, data2 = ILEC, mean, R=99)}
-\dontrun{permutationTest2(CLEC, data2 = ILEC, mean}
-
 
 ### Example with plots and confidence intervals.
-\dontrun{
+\donttest{
 boot <- bootstrap2(CLEC, data2 = ILEC, mean)
 perm <- permutationTest2(CLEC, data2 = ILEC, mean,
                          alternative = "greater")
-}
-\dontshow{
-boot <- bootstrap2(CLEC, data2 = ILEC, mean, R=100)
-perm <- permutationTest2(CLEC, data2 = ILEC, mean,
-                         alternative = "greater", R=99)
-}
-\dontrun{
 par(mfrow = c(2,2))
 hist(boot)
 qqnorm(boot)
 qqline(boot$replicates)
 hist(perm)
 }
-
+\dontshow{
+boot <- bootstrap2(CLEC, data2 = ILEC, mean, R=100)
+perm <- permutationTest2(CLEC, data2 = ILEC, mean,
+                         alternative = "greater", R=99)
+}
 # P-value
 perm
-
 # Standard error, and bias estimate
 boot
 
@@ -222,8 +208,8 @@ CI.bootstrapT(bootC2)
 # The bootstrapT is the most accurate for skewed data, especially
 # for small samples.
 
-# By default the percentile interval is "expanded", for better coverage
-# in small samples. To turn this off:
+# By default the percentile and BCa intervals are "expanded", for
+# better coverage in small samples. To turn this off:
 CI.percentile(bootC, expand = FALSE)
 }
 \keyword{nonparametric}

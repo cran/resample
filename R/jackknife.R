@@ -45,7 +45,7 @@ if(FALSE) {
   x9 <- (1:9)^2
   xDF <- data.frame(X = x9, Y = 2*x9)
 
-  source("~/resample/R/jackknife.R")
+  source("~/Rlang/resample/resample/R/jackknife.R")
 
   ### statistic by name
   # base case: data by name, statistic is function by name
@@ -88,5 +88,5 @@ if(FALSE) {
   .Random.seed <- temp$seed
   all.equal(temp, eval(temp$call))
 
-  source("~/resample/R/jackknife.R")
+  source("~/Rlang/resample/resample/R/jackknife.R")
 }
